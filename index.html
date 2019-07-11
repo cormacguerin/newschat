@@ -25,6 +25,26 @@
 			.title {
 				font-size: 1rem;
 			}
+			a {
+				color: black;
+				font-size: 1.2em;
+				font-weight: bold;
+			}
+			.pubdate {
+				color: black;
+			}
+			.item {
+				width: 500px;
+				margin-top: 20px;
+				margin-left: auto;
+				margin-right: auto;
+				background-color: white;
+				padding: 10px;
+				font-family: sans-serif;
+				color: dimgrey;
+				border-radius: 5px;
+				font-size: 0.85em;
+			}
 		</style>
 
                 <div class="header">
@@ -47,17 +67,27 @@
 						});
 				}
 				function createItem(item) {
-						// create an empty div element
+						// create an empty div elements
 						var element = document.createElement('div');
-						// build content elements
-						var link = createLink(item.link, item.title);
 						var snippet = document.createElement('div');
-						snippet.innerHTML=item.contentSnippet;
 						var pubdate = document.createElement('div');
+						var title = createLink(item.link, item.title);
+
+						// assign classnames for styling later.
+						element.className = "item";
+						snippet.className = "snippet";
+						pubdate.className = "pubdate";
+						title.className = "title";
+
+						// add the news item data to each element.
+						snippet.innerHTML=item.contentSnippet;
 						pubdate.innerHTML=item.pubDate;
-						$(link).appendTo(element);
+
+						// attach all data element to main element
+						$(title).appendTo(element);
 						$(pubdate).appendTo(element);
 						$(snippet).appendTo(element);
+						// Attach the element to the feed placeholder
 						$(element).appendTo('#feed');
 				}
 				$.get("http://127.0.0.1:3000/getNews", function(data, status) {
