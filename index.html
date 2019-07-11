@@ -4,15 +4,11 @@
 		<style>
 			body {
 				margin: 0;
-				background: linear-gradient(135deg,#ca3058 0%,#ff9a4b 100%);
-			}
-			.background {
-				margin-left: auto;
-				margin-right: auto;
 				background-image: url("citybg.jpg");
+                                background-image: url("citybg.jpg"), linear-gradient(35deg,#ca3058 0%,#ff9a4b 100%);
 				background-repeat: no-repeat;
 				background-position: center;
-				height: 100%;
+				background-attachment: fixed;
 			}
 			.header {
 				font-family: helvetica;
@@ -31,18 +27,43 @@
 			}
 		</style>
 
-		<div class="background">
-			<div class="header">
-				NewsChat
-				<span class="title">
-					discussing todays topics.
-				</span>
-			</div>
-		</div>
+                <div class="header">
+                        NewsChat
+                        <span class="title">
+                                discussing todays topics.
+                        </span>
+                </div>
+
+                <div id="feed">
+                </div>
 
 		<script>
-			$.get("http://127.0.0.1:3000/getNews", function(data, status){
-				console.log(data);
+                        function createLink(link,title) {
+                            return $("<a />", {
+                                id : "id5",
+                                name : "link",
+                                href : link,
+                                text : title
+                            });
+                        }
+                        function createItem(item) {
+                            // create an empty div element
+                            var element = document.createElement('div');
+                            // build content elements
+                            var link = createLink(item.link, item.title);
+                            var snippet = document.createElement('div');
+                            snippet.innerHTML=item.contentSnippet;
+                            var pubdate = document.createElement('div');
+                            pubdate.innerHTML=item.pubDate;
+                            $(link).appendTo(element);
+                            $(pubdate).appendTo(element);
+                            $(snippet).appendTo(element);
+                            $(element).appendTo('#feed');
+                        }
+			$.get("http://127.0.0.1:3000/getNews", function(data, status) {
+                                for (i in data.items) {
+                                      createItem(data.items[i]);
+                                }
 			});
 		</script>
 	</body>
