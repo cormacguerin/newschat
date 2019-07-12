@@ -45,6 +45,18 @@
 				border-radius: 5px;
 				font-size: 0.85em;
 			}
+                        .comment {
+                                width: 500px;
+                                margin-top: 5px;
+                                margin-bottom: 5px;
+                        }
+                        .submit {
+                                background: none;
+                                outline: none;
+                                border: none;
+                                text-decoration: underline;
+                                cursor: pointer;
+                        }
 		</style>
 
                 <div class="header">
@@ -73,11 +85,31 @@
 						var pubdate = document.createElement('div');
 						var title = createLink(item.link, item.title);
 
+                                                // comment elements.
+                                                var comment = document.createElement("INPUT");
+                                                var name = document.createElement("INPUT");
+                                                var submit = document.createElement("BUTTON");
+
+                                                // set placeholder text on input elements.
+                                                comment.setAttribute('placeholder', 'Enter Comment');
+                                                name.setAttribute('placeholder', 'Name');
+                                                submit.innerText = 'Submit';
+
 						// assign classnames for styling later.
 						element.className = "item";
 						snippet.className = "snippet";
 						pubdate.className = "pubdate";
 						title.className = "title";
+                                                comment.className = "comment";
+                                                name.className = "name";
+                                                submit.className = "submit";
+
+                                                // add an event listener to the button
+                                                submit.addEventListener('click', function (event) {
+                                                    console.log(comment.value);
+                                                    console.log(name.value);
+                                                    console.log(item.link);
+                                                });
 
 						// add the news item data to each element.
 						snippet.innerHTML=item.contentSnippet;
@@ -87,6 +119,9 @@
 						$(title).appendTo(element);
 						$(pubdate).appendTo(element);
 						$(snippet).appendTo(element);
+						$(comment).appendTo(element);
+						$(name).appendTo(element);
+						$(submit).appendTo(element);
 						// Attach the element to the feed placeholder
 						$(element).appendTo('#feed');
 				}
