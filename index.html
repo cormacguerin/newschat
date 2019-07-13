@@ -45,18 +45,28 @@
 				border-radius: 5px;
 				font-size: 0.85em;
 			}
-                        .comment {
-                                width: 500px;
-                                margin-top: 5px;
-                                margin-bottom: 5px;
-                        }
-                        .submit {
-                                background: none;
-                                outline: none;
-                                border: none;
-                                text-decoration: underline;
-                                cursor: pointer;
-                        }
+			.comment {
+				width: 500px;
+				margin-top: 5px;
+				margin-bottom: 5px;
+			}
+			.submit {
+				background: none;
+				outline: none;
+				border: none;
+				text-decoration: underline;
+				cursor: pointer;
+			}
+			.commentName {
+				font-weight: bold;
+			}
+			.commentDate {
+				float: right;
+				font-size: 0.8em;
+			}
+			.commentText {
+				margin-bottom: 5px;
+			}
 		</style>
 
                 <div class="header">
@@ -85,31 +95,81 @@
 						var pubdate = document.createElement('div');
 						var title = createLink(item.link, item.title);
 
-                                                // comment elements.
-                                                var comment = document.createElement("INPUT");
-                                                var name = document.createElement("INPUT");
-                                                var submit = document.createElement("BUTTON");
+						// comment elements.
+						var comment = document.createElement("INPUT");
+						var name = document.createElement("INPUT");
+						var submit = document.createElement("BUTTON");
+						var comments = document.createElement('div');
 
-                                                // set placeholder text on input elements.
-                                                comment.setAttribute('placeholder', 'Enter Comment');
-                                                name.setAttribute('placeholder', 'Name');
-                                                submit.innerText = 'Submit';
+						// set placeholder text on input elements.
+						comment.setAttribute('placeholder', 'Enter Comment');
+						name.setAttribute('placeholder', 'Name');
+						submit.innerText = 'Submit';
+						comments.innerHTML = 'show comments';
 
 						// assign classnames for styling later.
 						element.className = "item";
 						snippet.className = "snippet";
 						pubdate.className = "pubdate";
 						title.className = "title";
-                                                comment.className = "comment";
-                                                name.className = "name";
-                                                submit.className = "submit";
+						comment.className = "comment";
+						name.className = "name";
+						submit.className = "submit";
+						comments.className = "comments";
 
-                                                // add an event listener to the button
-                                                submit.addEventListener('click', function (event) {
-                                                    console.log(comment.value);
-                                                    console.log(name.value);
-                                                    console.log(item.link);
-                                                });
+						// add an event listener to add a comment via ajax
+						submit.addEventListener('click', function (event) {
+							$.post("http://127.0.0.1:3000/addComment",
+								{
+									"comment": comment.value,
+									"name": name.value,
+									"url": item.link
+								},
+								function(data, status) {
+									console.log("Data: " + data);
+									console.log("Status: " + status);
+									if (status==="success") {
+											location.reload();
+									}
+							});
+						});
+
+						// add an event listener to add a comment via ajax
+						comments.addEventListener('click', function (event) {
+							$.get("http://127.0.0.1:3000/getComments",
+								{
+									"url": item.link
+								},
+								function(data, status) {
+									// change comments text from 'show comments' to 'comments'.
+									comments.innerHTML = 'comments';
+									// loop over the comments data a build a tree of data.
+									for (i in data) {
+										// create a parent element for each comment.
+										var comment_item = document.createElement('div');
+										// create elements for comment,name and date.
+										var data_name = document.createElement('span');
+										var data_date = document.createElement('span');
+										var data_comment = document.createElement('div');
+										// add class names for styling.
+										data_name.className = 'commentName';
+										data_date.className = 'commentDate';
+										data_comment.className = 'commentText';
+										// add the response values into each div.
+										data_name.innerHTML = data[i].name;
+										data_date.innerHTML = data[i].date;
+										data_comment.innerHTML = data[i].comment;
+										// add the comment divs into the parent element.
+										$(data_name).appendTo(comment_item);
+										$(data_date).appendTo(comment_item);
+										$(data_comment).appendTo(comment_item);
+										// add the parent element to it's parent comments
+										$(comment_item).appendTo(comments);
+									}
+									console.log("Data: " + data);
+									console.log("Status: " + status);
+							});
+						});
 
 						// add the news item data to each element.
 						snippet.innerHTML=item.contentSnippet;
@@ -122,6 +182,7 @@
 						$(comment).appendTo(element);
 						$(name).appendTo(element);
 						$(submit).appendTo(element);
+						$(comments).appendTo(element);
 						// Attach the element to the feed placeholder
 						$(element).appendTo('#feed');
 				}
